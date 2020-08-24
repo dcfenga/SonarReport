@@ -13,7 +13,7 @@ class SonarDAOTest {
 
     @BeforeEach
     void setUp() {
-         //soanrqueb服务地址
+        //SonarQube服务地址
         dao = new SonarDAO("http://127.0.0.1:9000");
         dao.login();
     }
@@ -26,13 +26,13 @@ class SonarDAOTest {
     @Test
     void listProjects() {
         val projects = dao.listProjects();
-        log.info("sonar项目名称："+projects);
+        log.info("Sonar项目名称：" + projects);
     }
 
     @Test
     void listUsers() {
         val users = dao.listUsers();
-        log.info("sonar用户："+users);
+        log.info("Sonar用户：" + users);
     }
 
     @Test

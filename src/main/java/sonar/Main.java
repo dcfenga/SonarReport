@@ -3,7 +3,6 @@ package sonar;
 import io.vavr.control.Try;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import sonar.dao.SonarDAO;
 import sonar.entities.Statistics;
 import sonar.utils.$;
@@ -15,9 +14,16 @@ import java.util.*;
 
 @Log4j2
 public class Main {
+    // 为Git提交用户姓名初始化赋值
+    private static HashMap<String, String> mapUserName = new HashMap<String, String>() {
+        {
+            put("dcfenga@sina.com", "冯道臣");
+        }
+    };
+
     public static void main(String[] args) throws FileAlreadyExistsException {
-        //sonarqube服务地址
-        String baseUrl = "127.0.0.1:9000";
+        //SonarQube服务地址
+        String baseUrl = "10.138.93.33:9003";
         String fileName = "index.html";
 
         if (args.length == 1) {
@@ -44,7 +50,7 @@ public class Main {
             file.delete();
         }
 
-        log.info("正在从系统上读取数据....");
+        log.info("正从SonarQube系统上读取数据....");
         val stats = generateStats(baseUrl);
         log.info("数据读取完毕，开始解析数据...");
         val sheet1 = transformTable1(stats);
@@ -56,16 +62,11 @@ public class Main {
         try (val fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
             fw.write(format);
             fw.flush();
-            log.info("报表生成好了！");
+            log.info("报表成功生成！");
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
         System.exit(0);
-    }
-
-    private static void printHelp() {
-        log.info("第一个参数（必须）：输入sonar的地址，如http://10.16.128.39:9000，注意以【http://】开头，结尾不能添加【/】");
-        log.info("第二个参数（可选）：输入要生成的报告文件名称");
     }
 
     private static List<Statistics> generateStats(String baseUrl) {
@@ -98,13 +99,11 @@ public class Main {
     private static String ctr = "</tr>";
 
     private static String[] severities = {"BLOCKER", "CRITICAL", "MAJOR", "MINOR", "INFO"};
-    // 为git提交用户姓名初始化赋值
-    private static HashMap<String, String> mapUserName = new HashMap<String, String>() {
-        {
-            put("liyue", "李月");
-            put("yangyang", "杨阳");
-        }
-    };
+
+    private static void printHelp() {
+        log.info("第一个参数（必须）：输入SonarQube的地址，例如：http://10.16.128.39:9000，注意以[http://]开头，结尾不能添加[/]");
+        log.info("第二个参数（可选）：输入要生成的报告文件名称");
+    }
 
     private static String transformTable1(List<Statistics> stats) {
         val ret = new StringBuilder();
@@ -112,11 +111,11 @@ public class Main {
             val stat = stats.get(i);
             for (int j = 0; j < stat.getUsers().size(); j++) {
                 val user = stat.getUsers().get(j);
-                String userRep="";
+                String userRep = "";
                 //遍历获取userName
                 for (Map.Entry<String, String> entry : mapUserName.entrySet()) {
-                    if(entry.getKey().equals(user)){
-                        userRep=entry.getValue();
+                    if (entry.getKey().equals(user)) {
+                        userRep = entry.getValue();
                     }
                 }
                 val htmlTr = new StringBuilder(otr);
@@ -168,11 +167,11 @@ public class Main {
             allUsers.addAll(stat.getUsers());
         }
         for (val user : allUsers) {
-            String userRep="";
+            String userRep = "";
             //遍历获取userName
             for (Map.Entry<String, String> entry : mapUserName.entrySet()) {
-                if(entry.getKey().equals(user)){
-                    userRep=entry.getValue();
+                if (entry.getKey().equals(user)) {
+                    userRep = entry.getValue();
                 }
             }
             val tr = new StringBuilder(otr).append(otd).append(userRep).append(ctd);
