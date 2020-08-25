@@ -23,7 +23,7 @@ public class Main {
 
     public static void main(String[] args) throws FileAlreadyExistsException {
         //SonarQube服务地址
-        String baseUrl = "10.138.93.33:9003";
+        String baseUrl = "10.138.93.33:9000";
         String fileName = "index.html";
 
         if (args.length == 1) {
@@ -110,6 +110,7 @@ public class Main {
         for (int i = 0; i < stats.size(); i++) {
             val stat = stats.get(i);
             for (int j = 0; j < stat.getUsers().size(); j++) {
+                /*
                 val user = stat.getUsers().get(j);
                 String userRep = "";
                 //遍历获取userName
@@ -118,6 +119,10 @@ public class Main {
                         userRep = entry.getValue();
                     }
                 }
+                */
+                val user = stat.getUsers().get(j);
+                val userRep = stat.getUsers().get(j);
+
                 val htmlTr = new StringBuilder(otr);
                 if (j == 0)
                     htmlTr.append("<td rowspan='").append(Math.max(1, stat.getUsers().size())).append("' style='font-size:1em;font-weight: bold'>").append(stat.getProjectName()).append(ctd);
@@ -167,6 +172,7 @@ public class Main {
             allUsers.addAll(stat.getUsers());
         }
         for (val user : allUsers) {
+            /*
             String userRep = "";
             //遍历获取userName
             for (Map.Entry<String, String> entry : mapUserName.entrySet()) {
@@ -174,6 +180,9 @@ public class Main {
                     userRep = entry.getValue();
                 }
             }
+            */
+
+            String userRep = user;
             val tr = new StringBuilder(otr).append(otd).append(userRep).append(ctd);
 
             int cntTotalBugs = 0;
